@@ -26,14 +26,14 @@ describe('Visit base url', function () {
 
         await searchElem.sendKeys(username);
 
-        await browser.sleep(5000);
+        await browser.sleep(2000);
 
         const searchTypeAhead = 'search-typeahead-v2__hit'
         const firstFindElem = await browser.findElement(by.css(`.${searchTypeAhead}.${searchTypeAhead}--profile-entity`));
 
         firstFindElem.click();
 
-        await browser.sleep(5000);
+        await browser.sleep(2000);
 
         // parsing data
 
@@ -48,30 +48,43 @@ describe('Visit base url', function () {
         const lastExperienceCompanyTitle = await (await lastExperienceEl.findElement(by.css('h3'))).getText();
         const lastExperienceCompanyLogoUrl = await (await lastExperienceEl.findElement(by.css('.pv-entity__logo-img'))).getAttribute('src');
 
+        const lastExperienceCompanyDuration = await (await lastExperienceEl.findElement(by.css('.pv-entity__bullet-item-v2'))).getText();
+
+        console.dir(lastExperienceCompanyDuration);
         // expandButton
         await (await browser.findElement(by.css('.pv-profile-section__card-action-bar'))).click();
+        // tools and technologies
+        await browser.sleep(3 * 1000);
 
-        const categoryList = await browser.findElements(by.css('.pv-skill-category-list'));
-        const resolverArray = await Promise.all(categoryList);
-        const category = resolverArray.find(async (category) => {
-            const header = await category.findElement(by.css('.pv-skill-categories-section__secondary-skill-heading'));
-            const text = await header.getText();
-            return (text === 'Инструменты и технологии' || text === 'Tools & Technologies');
-        });
+        const categoryList = await browser.findElement(by.css('.pv-skill-categories-section__expanded'));
+        // let category;
+        const toolsHeader = await categoryList.findElement(by.xpath('//h3[text()="Tools & Technologies"]')); // заменить на англ
+        const toolsEls = await (await toolsHeader.findElement(by.xpath('..'))).findElements(by.css('.pv-skill-category-entity__name'));
+        const texts = await Promise.all(toolsEls.map(async tool => tool.getText())) || [];
 
-        console.dir(category);
-        const toolsAndTechnologies = await category.findElements(by.css('.pv-skill-category-entity'));
+        //education experience
+        const educationEls = await browser.findElements(by.css('.pv-education-entity'));
+        let globalEducation = 0;
+        const education = await Promise.all(educationEls.map(async el => {
+            const timeEls = await el.findElements(by.css('time'));
+            const time = await Promise.all(timeEls.map(async t => t.getText())) || [];
+            const calcTime = time.reduce((prev, next) => Math.abs(prev - next));
+            globalEducation += calcTime;
+        }));
 
+        console.dir(`calc Time: ${globalEducation}`);
 
         const exportJson = {
             name: fullName,
             position,
-            companyName: lastExperienceCompanyName,
-            companyTitle: lastExperienceCompanyTitle,
-            companyLogoUrl: lastExperienceCompanyLogoUrl,
-            toolsAndTechnologies
+            currentCompanyName: lastExperienceCompanyName,
+            currentCompanyTitle: lastExperienceCompanyTitle,
+            currentCompanyLogoUrl: lastExperienceCompanyLogoUrl,
+            currentCompanyExperience: lastExperienceCompanyDuration,
+            skills: texts,
+            education: globalEducation,
         };
 
         writeFileSync(`./${fullName}.json`, JSON.stringify(exportJson), { encoding: 'utf-8' });
-    });
-});
+    }, 5 * 60 * 1000);
+}, 6 * 60 * 1000);

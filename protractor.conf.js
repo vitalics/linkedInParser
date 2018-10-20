@@ -19,7 +19,7 @@ exports.config = {
             password: 'example'
         },
         search: {
-            username: 'valiantsin haradkou'
+            username: 'example user'
         },
     },
 

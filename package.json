@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/protractor ./protractor.conf.js  --params.login.email=vitalicset@yandex.ru --params.login.password=canada33 --params.search.username=ausiannikau",
+    "test": "./node_modules/.bin/protractor ./protractor.conf.js  --params.login.email=example@example.com --params.login.password=example --params.search.username=testUser",
     "update": "node ./node_modules/protractor/bin/webdriver-manager update"
   },
   "repository": {
