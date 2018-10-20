@@ -65,7 +65,7 @@ describe('Visit base url', function () {
         //education experience
         const educationEls = await browser.findElements(by.css('.pv-education-entity'));
         let globalEducation = 0;
-        const education = await Promise.all(educationEls.map(async el => {
+        await Promise.all(educationEls.map(async el => {
             const timeEls = await el.findElements(by.css('time'));
             const time = await Promise.all(timeEls.map(async t => t.getText())) || [];
             const calcTime = time.reduce((prev, next) => Math.abs(prev - next));
