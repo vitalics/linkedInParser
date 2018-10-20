@@ -76,7 +76,7 @@ describe('Visit base url', function () {
 
         const exportJson = {
             name: fullName,
-            position,
+            currentPosition: position,
             currentCompanyName: lastExperienceCompanyName,
             currentCompanyTitle: lastExperienceCompanyTitle,
             currentCompanyLogoUrl: lastExperienceCompanyLogoUrl,
